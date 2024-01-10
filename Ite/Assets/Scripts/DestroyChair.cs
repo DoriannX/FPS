@@ -3,32 +3,35 @@ using UnityEngine;
 public class DestroyChair : MonoBehaviour
 {
 
-    BoxCollider _collider;
-    [SerializeField] LayerMask _layerToStopExclude;
+    MeshCollider _collider;
+    public LayerMask _layerToStopExclude;
+    Rigidbody _rb;
 
     private void Start()
     {
-        _collider = GetComponent<BoxCollider>();
+        _collider = GetComponent<MeshCollider>();
+        _rb = GetComponent<Rigidbody>();
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Enemy")
+        if(collision.gameObject.tag != "Player" && collision.gameObject.tag != "Projectile" && collision.gameObject.tag != "Enemy")
         {
-            Destroy(gameObject);
+            //transform.SetParent(collision.transform, true);
+            //_rb.isKinematic = true;
+            _rb.AddForce(-_rb.velocity, ForceMode.Impulse);
+            print("entered");
         }
-        else
-        {
-            Destroy(gameObject, 15);
-        }
+        Destroy(gameObject, 15);
     }
     private void Awake()
     {
         Invoke(nameof(TouchPlayer), 1);
+
     }
 
     void TouchPlayer()
     {
-        _collider.excludeLayers = _layerToStopExclude;
+        gameObject.layer = 7;
     }
 
 }

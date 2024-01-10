@@ -1,5 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,7 +12,8 @@ public class Shoot : MonoBehaviour
     [Header("References")]
     Transform _cam;
     Transform _attackPoint;
-    [SerializeField] GameObject _objectToThrow;
+    List<Object> _objectsToThrow = new List<Object>();
+    Object _objectToThrow;
 
     [Header("Settings")]
     [SerializeField] int _totalThrows;
@@ -24,13 +29,16 @@ public class Shoot : MonoBehaviour
 
     Transform _tranform;
 
+    [SerializeField] LayerMask _playerLayer;
+
     private void Start()
     {
         _cam = GameObject.Find("Main Camera").transform;
         _tranform = transform;
         _attackPoint = GameObject.Find("ThrowPointAttack").transform;
+        _objectsToThrow = Resources.LoadAll("Projectiles/").ToList();
     }
-
+    
     public void gatherThrow(InputAction.CallbackContext ctx)
     {
         if(_readyToThrow && _totalThrows > 0)
@@ -45,7 +53,16 @@ public class Shoot : MonoBehaviour
         _readyToThrow = false;
 
         //instantiate object to throw
-        GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position, _cam.rotation);
+        _objectToThrow = _objectsToThrow[Random.Range(0, _objectsToThrow.Count)];
+        GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position, _cam.rotation) as GameObject;
+        projectile.AddComponent<Rigidbody>();
+        projectile.GetComponent<Rigidbody>().interpolation = RigidbodyInterpolation.Interpolate;
+        projectile.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
+        projectile.AddComponent<DestroyChair>();
+        projectile.GetComponent<DestroyChair>()._layerToStopExclude = 8;
+        if (projectile.GetComponent<Collider>() is MeshCollider meshcolid)
+            meshcolid.convex = true;
+        projectile.layer = 9;
 
         //get rb
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
@@ -54,7 +71,7 @@ public class Shoot : MonoBehaviour
         Vector3 forceDirection = _cam.transform.forward;
         RaycastHit hit;
 
-        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player")))){
+        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no")))){
             forceDirection = (hit.point - _attackPoint.position).normalized;
         }
 

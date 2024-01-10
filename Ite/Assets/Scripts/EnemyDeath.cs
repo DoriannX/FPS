@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyDeath : MonoBehaviour
 {
     Animator _animator;
-    [SerializeField] LayerMask _projectileLayer;
+    public LayerMask _projectileLayer;
 
     CapsuleCollider _cC;
     Rigidbody _rb;
@@ -18,7 +18,7 @@ public class EnemyDeath : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Projectile")
+        if(collision.gameObject.layer == 7 || collision.gameObject.layer == 9)
         {
             _animator.SetBool("touched", true);
             _cC.isTrigger = true;
