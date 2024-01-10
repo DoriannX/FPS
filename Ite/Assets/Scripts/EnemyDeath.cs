@@ -1,28 +1,48 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyDeath : MonoBehaviour
 {
-    Animator _animator;
-    public LayerMask _projectileLayer;
-
-    CapsuleCollider _cC;
     Rigidbody _rb;
-
+    GameObject _player;
+    Transform _transform;
+    [SerializeField] float hitForce;
+    Collider _collider;
     private void Start()
     {
-        _animator = GetComponent<Animator>();
-        _cC = GetComponent<CapsuleCollider>();
+        _transform = transform;
+        _player = GameObject.Find("Player");
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
+        GetChildren(_transform, true);
     }
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.layer == 7 || collision.gameObject.layer == 9)
         {
-            _animator.SetBool("touched", true);
-            _cC.isTrigger = true;
-            _rb.isKinematic = true;
+            Destroy(_rb);
+            _collider.enabled = false;
+            print("dead");
+            GetChildren(transform, false);
+        }
+    }
+
+    private void GetChildren(Transform parent, bool state)
+    {
+        foreach (Transform child in parent)
+        {
+            if(child.TryGetComponent<Rigidbody>(out Rigidbody childBody))
+            {
+                childBody.interpolation = RigidbodyInterpolation.Interpolate;
+                childBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                childBody.isKinematic = state;
+                child.GetComponent<Collider>().enabled = !state;
+                Vector3 forceDirection = (_transform.position - _player.transform.position).normalized * hitForce;
+                if (!state)
+                {
+                    childBody.AddForce(forceDirection, ForceMode.Impulse);
+                }
+            }
+            GetChildren(child, state);
         }
     }
 }

@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
 
 public class Shoot : MonoBehaviour
 {
@@ -30,6 +32,7 @@ public class Shoot : MonoBehaviour
     Transform _tranform;
 
     [SerializeField] LayerMask _playerLayer;
+    Vector3 _forceToAdd;
 
     private void Start()
     {
@@ -55,36 +58,51 @@ public class Shoot : MonoBehaviour
         //instantiate object to throw
         _objectToThrow = _objectsToThrow[Random.Range(0, _objectsToThrow.Count)];
         GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position, _cam.rotation) as GameObject;
-        projectile.AddComponent<Rigidbody>();
-        projectile.GetComponent<Rigidbody>().interpolation = RigidbodyInterpolation.Interpolate;
-        projectile.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
-        projectile.AddComponent<DestroyChair>();
-        projectile.GetComponent<DestroyChair>()._layerToStopExclude = 8;
-        if (projectile.GetComponent<Collider>() is MeshCollider meshcolid)
-            meshcolid.convex = true;
         projectile.layer = 9;
-
-        //get rb
-        Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
-
         //calculate direction
         Vector3 forceDirection = _cam.transform.forward;
         RaycastHit hit;
 
-        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no")))){
+        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no"))))
+        {
             forceDirection = (hit.point - _attackPoint.position).normalized;
+            print(hit.collider.gameObject.layer);
         }
 
-        //add force
-        Vector3 forceToAdd = forceDirection * _throwForce + _tranform.up * _throwUpwardForce;
+        //Calculate force to add
+        _forceToAdd = forceDirection * _throwForce + _tranform.up * _throwUpwardForce;
+        if (projectile.GetComponent<Collider>() is MeshCollider meshcolid)
+            meshcolid.convex = true;
 
-        projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
+
+        AddForce(projectile.transform);
+        Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
+        DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
+        parentDestroy._layerToStopExclude = 8;
+        parentBody.interpolation = RigidbodyInterpolation.Interpolate;
+        parentBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        parentBody.AddForce(_forceToAdd, ForceMode.Impulse);
         _totalThrows--;
 
         //implement throw cooldown
         Invoke(nameof(ResetThrow), _throwCooldown);
     }
-    
+
+    private void AddForce(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            Debug.Log("Enfant trouvé : " + child.name);
+            if (child.TryGetComponent<Rigidbody>(out Rigidbody body))
+            {
+                body.interpolation = RigidbodyInterpolation.Interpolate;
+                body.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                body.AddForce(_forceToAdd, ForceMode.Impulse);
+            }
+            AddForce(child);
+        }
+    }
+
 
     void ResetThrow()
     {
