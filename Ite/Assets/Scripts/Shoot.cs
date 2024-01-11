@@ -76,12 +76,16 @@ public class Shoot : MonoBehaviour
 
 
         AddForce(projectile.transform);
-        Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
+        if(projectile.tag != "articulated")
+        {
+            Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
+            parentBody.interpolation = RigidbodyInterpolation.Interpolate;
+            parentBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            parentBody.AddForce(_forceToAdd, ForceMode.Impulse);
+        }
+
         DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
         parentDestroy._layerToStopExclude = 8;
-        parentBody.interpolation = RigidbodyInterpolation.Interpolate;
-        parentBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        parentBody.AddForce(_forceToAdd, ForceMode.Impulse);
         _totalThrows--;
 
         //implement throw cooldown

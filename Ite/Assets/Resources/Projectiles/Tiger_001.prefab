@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tiger_001
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 54e1c6152e2ba2f4083a6ec521a90e94, type: 3}
+      propertyPath: m_TagString
+      value: articulated
+      objectReference: {fileID: 0}
     - target: {fileID: 1308579928725045010, guid: 54e1c6152e2ba2f4083a6ec521a90e94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.19

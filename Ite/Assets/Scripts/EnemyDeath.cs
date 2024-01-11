@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyDeath : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class EnemyDeath : MonoBehaviour
     Transform _transform;
     [SerializeField] float hitForce;
     Collider _collider;
+    NavMeshAgent _navMeshAgent;
     private void Start()
     {
         _transform = transform;
@@ -14,13 +16,15 @@ public class EnemyDeath : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         GetChildren(_transform, true);
+        _navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.layer == 7 || collision.gameObject.layer == 9)
         {
-            Destroy(_rb);
+            _rb.isKinematic = false;
             _collider.enabled = false;
+            _navMeshAgent.enabled = false;
             print("dead");
             GetChildren(transform, false);
         }
@@ -40,6 +44,8 @@ public class EnemyDeath : MonoBehaviour
                 if (!state)
                 {
                     childBody.AddForce(forceDirection, ForceMode.Impulse);
+                    childBody.mass *= .001f;
+                    Destroy(_rb);
                 }
             }
             GetChildren(child, state);
