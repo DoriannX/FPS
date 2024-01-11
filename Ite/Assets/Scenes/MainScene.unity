@@ -2230,6 +2230,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 800f88b61ee61c841967a1c7fc640d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &919132147743377547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147743377537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a39f838edc29ed498a5177a86c564de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _totalThrows: 100
+  _throwCooldown: 2
+  _throwForce: 30
+  _throwUpwardForce: 0
+  _playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1001 &8940837273854812399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2342,6 +2361,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7416314984272180279, guid: 72225b6f32d2ca64e9b92d07c34c7e90, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 919132147743377547}
     - targetCorrespondingSourceObject: {fileID: 7416314984272180279, guid: 72225b6f32d2ca64e9b92d07c34c7e90, type: 3}
       insertIndex: -1
       addedObject: {fileID: 919132147743377546}

@@ -22,11 +22,12 @@ public class EnemyDeath : MonoBehaviour
     {
         if(collision.gameObject.layer == 7 || collision.gameObject.layer == 9)
         {
-            _rb.isKinematic = false;
-            _collider.enabled = false;
-            _navMeshAgent.enabled = false;
-            print("dead");
             GetChildren(transform, false);
+            Destroy(_rb);
+            Destroy(_collider);
+            Destroy(GetComponent<AgentLinkMover>());
+            Destroy(_navMeshAgent);
+            print("dead");
         }
     }
 

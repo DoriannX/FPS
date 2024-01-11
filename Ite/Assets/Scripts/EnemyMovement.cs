@@ -71,10 +71,16 @@ public class EnemyMovement : MonoBehaviour
         //_rb.drag = (_grounded) ? _groundDrag : 0f;
 
         //SpeedControl();
-        if(_agent.enabled == true && !_playerDetecter._playerDetected)
+
+        
+        if (_agent)
         {
-            _agent.destination = _player.transform.position;
-            _transform.position = _agent.nextPosition;
+            _transform.LookAt(new Vector3(_player.transform.position.x, _transform.position.y, _player.transform.position.z));
+            if (!_playerDetecter._playerDetected)
+            {
+                _agent.destination = _player.transform.position;
+                _transform.position = _agent.nextPosition;
+            }
         }
 
     }

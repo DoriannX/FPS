@@ -1,18 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
 
-public class Shoot : MonoBehaviour
+public class EnemyShoot : MonoBehaviour
 {
     [Header("References")]
-    Transform _cam;
     Transform _attackPoint;
     List<Object> _objectsToThrow = new List<Object>();
     Object _objectToThrow;
@@ -27,27 +22,36 @@ public class Shoot : MonoBehaviour
 
     bool _readyToThrow = true;
 
-    bool _throwInput;
-
-    Transform _tranform;
+    Transform _transform;
 
     [SerializeField] LayerMask _playerLayer;
     Vector3 _forceToAdd;
 
+    playerDetecter _playerDetecter;
+    GameObject _player;
+    NavMeshAgent _agent;
+
     private void Start()
     {
-        _cam = GameObject.Find("Main Camera").transform;
-        _tranform = transform;
-        _attackPoint = GameObject.Find("ThrowPointAttack").transform;
+        _transform = transform;
+        _attackPoint = _transform;
         _objectsToThrow = Resources.LoadAll("Projectiles/").ToList();
+        foreach (Transform child in _transform)
+        {
+            if (child.name == "PlayerDetecter")
+            {
+                _playerDetecter = child.gameObject.GetComponent<playerDetecter>();
+            }
+        }
+        _player = GameObject.Find("Player");
+        _agent = GetComponent<NavMeshAgent>();
     }
-    
-    public void gatherThrow(InputAction.CallbackContext ctx)
+    private void Update()
     {
-        if(_readyToThrow && _totalThrows > 0 && ctx.performed)
+        if (_playerDetecter._playerDetected && _readyToThrow && _totalThrows > 0 && _agent)
         {
             Throw();
-        }   
+        }
     }
 
 
@@ -57,26 +61,26 @@ public class Shoot : MonoBehaviour
 
         //instantiate object to throw
         _objectToThrow = _objectsToThrow[Random.Range(0, _objectsToThrow.Count)];
-        GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position, _cam.rotation) as GameObject;
-        projectile.layer = 9;
+        GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position + _transform.up + _transform.forward, _transform.rotation) as GameObject;
+        projectile.layer = 0;
         //calculate direction
-        Vector3 forceDirection = _cam.transform.forward;
+        Vector3 forceDirection = (_player.transform.position - _player.transform.up) - projectile.transform.position;
         RaycastHit hit;
 
-        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no"))))
+        if (Physics.Raycast(_transform.position, _transform.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no"))))
         {
             forceDirection = (hit.point - _attackPoint.position).normalized;
             print(hit.collider.gameObject.layer);
         }
 
         //Calculate force to add
-        _forceToAdd = forceDirection * _throwForce + _tranform.up * _throwUpwardForce;
+        _forceToAdd = forceDirection * _throwForce + _transform.up * _throwUpwardForce;
         if (projectile.GetComponent<Collider>() is MeshCollider meshcolid)
             meshcolid.convex = true;
 
 
         AddForce(projectile.transform);
-        if(projectile.tag != "articulated")
+        if (projectile.tag != "articulated")
         {
             Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
             parentBody.interpolation = RigidbodyInterpolation.Interpolate;
@@ -87,7 +91,6 @@ public class Shoot : MonoBehaviour
         DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
         parentDestroy._layerToStopExclude = 8;
         _totalThrows--;
-
         //implement throw cooldown
         Invoke(nameof(ResetThrow), _throwCooldown);
     }
