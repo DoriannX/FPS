@@ -139,7 +139,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: -5140632032198367520, guid: d416ef3d80b2456469ef4d4136ee2a00, type: 3}
   m_Bones:
@@ -1688,7 +1688,7 @@ GameObject:
   - component: {fileID: 3897066556541352024}
   - component: {fileID: 921248146855028460}
   - component: {fileID: 6955420806550821743}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PlayerDetecter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2206,12 +2206,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1034701313388777760}
+  - component: {fileID: 6057531578394726076}
   - component: {fileID: 5735561007187626257}
   - component: {fileID: 6084565347749535309}
   - component: {fileID: 5521688821167372990}
   - component: {fileID: 1761993042813722467}
   - component: {fileID: 6016777204278812333}
   - component: {fileID: 6633709684775714289}
+  - component: {fileID: 4265009175485569271}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -2237,6 +2239,25 @@ Transform:
   - {fileID: 3897066556541352024}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &6057531578394726076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7416314984272180279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a39f838edc29ed498a5177a86c564de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _totalThrows: 100
+  _throwCooldown: 2
+  _throwForce: 30
+  _throwUpwardForce: 0
+  _playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &5735561007187626257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2262,14 +2283,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b0a0ceb82738ba4cb2d9e956b7dd584, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 0
-  _groundDrag: 0
-  _playerHeight: 0
+  _moveSpeed: 7
+  _groundDrag: 5
+  _playerHeight: 2
   _whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
-  maxSlopeAngle: 0
-  _airMultiplier: 0
+    m_Bits: 64
+  maxSlopeAngle: 40
+  _airMultiplier: 0.4
 --- !u!136 &5521688821167372990
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2316,7 +2337,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
@@ -2330,7 +2351,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 7
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -2388,6 +2409,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4265009175485569271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7416314984272180279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 800f88b61ee61c841967a1c7fc640d42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7584124240714126190
 GameObject:
   m_ObjectHideFlags: 0

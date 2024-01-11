@@ -9,6 +9,8 @@ public class EnemyDeath : MonoBehaviour
     [SerializeField] float hitForce;
     Collider _collider;
     NavMeshAgent _navMeshAgent;
+    SpawnEnemies _spawnEnemies;
+    ScoreManager _scoreManager;
     private void Start()
     {
         _transform = transform;
@@ -17,6 +19,8 @@ public class EnemyDeath : MonoBehaviour
         _collider = GetComponent<Collider>();
         GetChildren(_transform, true);
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _spawnEnemies = GameObject.Find("EnemiesLocations").GetComponent<SpawnEnemies>();
+        _scoreManager = GameObject.Find("Manager").GetComponent<ScoreManager>();
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -28,6 +32,9 @@ public class EnemyDeath : MonoBehaviour
             Destroy(GetComponent<AgentLinkMover>());
             Destroy(_navMeshAgent);
             print("dead");
+            _spawnEnemies.SpawnEnemy();
+            _spawnEnemies._deadEnemies++;
+            _scoreManager.score++;
         }
     }
 

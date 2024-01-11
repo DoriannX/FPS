@@ -4,7 +4,6 @@ public class DestroyChair : MonoBehaviour
 {
 
     MeshCollider _collider;
-    public LayerMask _layerToStopExclude;
     Rigidbody _rb;
 
     private void Start()
@@ -19,16 +18,14 @@ public class DestroyChair : MonoBehaviour
             //transform.SetParent(collision.transform, true);
             //_rb.isKinematic = true;
             _rb.AddForce(-_rb.velocity, ForceMode.Impulse);
-            print("entered");
         }
-        Destroy(gameObject, 15);
+        Destroy(gameObject, 5);
     }
 
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("whatIsGround"))
         {
-            print("touched ground");
             gameObject.layer = LayerMask.NameToLayer("whatIsGround");
         }
     }

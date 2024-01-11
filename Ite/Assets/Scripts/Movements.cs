@@ -101,9 +101,6 @@ public class Movements : MonoBehaviour
         //gather inputs
         _horizontalInput = ctx.ReadValue<Vector2>().x;
         _verticalInput = ctx.ReadValue<Vector2>().y;
-        print(ctx.ReadValue<Vector2>());
-        print(_horizontalInput);
-        print(_verticalInput);
     }
 
     void StateHandler()
@@ -142,7 +139,6 @@ public class Movements : MonoBehaviour
         {
 
             _rb.AddForce(GetSlopeMoveDirection() * _moveSpeed * 20f, ForceMode.Force);
-            print("on slope");
             if (_rb.velocity.y > 0)
             {
                 _rb.AddForce(Vector3.down * 80f, ForceMode.Force);
@@ -186,7 +182,6 @@ public class Movements : MonoBehaviour
     void Jump()
     {
         _exitingSlope = true;
-        print("jump");
         //reset y velocity
         _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
 

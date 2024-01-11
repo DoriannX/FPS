@@ -1,13 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
 
 public class Shoot : MonoBehaviour
 {
@@ -63,10 +57,9 @@ public class Shoot : MonoBehaviour
         Vector3 forceDirection = _cam.transform.forward;
         RaycastHit hit;
 
-        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no"))))
+        if (Physics.Raycast(_cam.position, _cam.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no") | 1 << LayerMask.NameToLayer("ignore"))))
         {
             forceDirection = (hit.point - _attackPoint.position).normalized;
-            print(hit.collider.gameObject.layer);
         }
 
         //Calculate force to add
@@ -78,15 +71,15 @@ public class Shoot : MonoBehaviour
         AddForce(projectile.transform);
         if(projectile.tag != "articulated")
         {
-            Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
+            //Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
+            Rigidbody parentBody = projectile.GetComponent<Rigidbody>();
             parentBody.interpolation = RigidbodyInterpolation.Interpolate;
             parentBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             parentBody.AddForce(_forceToAdd, ForceMode.Impulse);
         }
 
-        DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
-        parentDestroy._layerToStopExclude = 8;
-        _totalThrows--;
+        //DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
+        //_totalThrows--;
 
         //implement throw cooldown
         Invoke(nameof(ResetThrow), _throwCooldown);
@@ -96,7 +89,6 @@ public class Shoot : MonoBehaviour
     {
         foreach (Transform child in parent)
         {
-            Debug.Log("Enfant trouvé : " + child.name);
             if (child.TryGetComponent<Rigidbody>(out Rigidbody body))
             {
                 body.interpolation = RigidbodyInterpolation.Interpolate;
