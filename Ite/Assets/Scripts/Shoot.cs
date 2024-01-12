@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -69,6 +70,8 @@ public class Shoot : MonoBehaviour
 
 
         AddForce(projectile.transform);
+        if (projectile.GetComponent<DestroyChair>())
+            projectile.AddComponent<DestroyChair>();
         if(projectile.tag != "articulated")
         {
             //Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
@@ -94,7 +97,10 @@ public class Shoot : MonoBehaviour
                 body.interpolation = RigidbodyInterpolation.Interpolate;
                 body.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 body.AddForce(_forceToAdd, ForceMode.Impulse);
+                if(parent.tag != "articulated")
+                    child.AddComponent<DestroyChair>();
             }
+            child.gameObject.layer = 9;
             AddForce(child);
         }
     }

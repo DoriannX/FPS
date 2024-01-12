@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.HID;
 
 public class EnemyShoot : MonoBehaviour
 {
@@ -62,13 +64,7 @@ public class EnemyShoot : MonoBehaviour
         GameObject projectile = Instantiate(_objectToThrow, _attackPoint.position + _transform.up + _transform.forward, _transform.rotation) as GameObject;
         projectile.layer = 10;
         //calculate direction
-        Vector3 forceDirection = (_player.transform.position - _player.transform.up) - projectile.transform.position;
-        RaycastHit hit;
-
-        if (Physics.Raycast(_transform.position, _transform.forward, out hit, 500f, ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Projectile") | 1 << LayerMask.NameToLayer("no"))))
-        {
-            forceDirection = (hit.point - _attackPoint.position).normalized;
-        }
+        Vector3 forceDirection = (_player.transform.position - _transform.position).normalized;
 
         //Calculate force to add
         _forceToAdd = forceDirection * _throwForce + _transform.up * _throwUpwardForce;
@@ -77,6 +73,8 @@ public class EnemyShoot : MonoBehaviour
 
 
         AddForce(projectile.transform);
+        if(projectile.GetComponent<DestroyChair>())
+            projectile.AddComponent<DestroyChair>();
         if (projectile.tag != "articulated")
         {
             //Rigidbody parentBody = projectile.AddComponent<Rigidbody>();
@@ -84,6 +82,7 @@ public class EnemyShoot : MonoBehaviour
             parentBody.interpolation = RigidbodyInterpolation.Interpolate;
             parentBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             parentBody.AddForce(_forceToAdd, ForceMode.Impulse);
+            
         }
 
         //DestroyChair parentDestroy = projectile.AddComponent<DestroyChair>();
@@ -101,7 +100,10 @@ public class EnemyShoot : MonoBehaviour
                 body.interpolation = RigidbodyInterpolation.Interpolate;
                 body.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 body.AddForce(_forceToAdd, ForceMode.Impulse);
+                if (parent.tag != "articulated")
+                    child.AddComponent<DestroyChair>();
             }
+            child.gameObject.layer = 10;
             AddForce(child);
         }
     }

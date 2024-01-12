@@ -5,11 +5,13 @@ public class DestroyChair : MonoBehaviour
 
     MeshCollider _collider;
     Rigidbody _rb;
+    bool stop = false;
 
     private void Start()
     {
         _collider = GetComponent<MeshCollider>();
         _rb = GetComponent<Rigidbody>();
+        Destroy(gameObject, 5);
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -17,9 +19,12 @@ public class DestroyChair : MonoBehaviour
         {
             //transform.SetParent(collision.transform, true);
             //_rb.isKinematic = true;
-            _rb.AddForce(-_rb.velocity, ForceMode.Impulse);
         }
-        Destroy(gameObject, 5);
+        if (!stop)
+        {
+            stop = true;
+            _rb.velocity = Vector3.zero;
+        }
     }
 
     private void OnCollisionStay(Collision collision)

@@ -13,6 +13,7 @@ public class LifeManager : MonoBehaviour
     [SerializeField] AudioClip _DeathMusic;
     bool stressed = false;
     bool dead = false;
+    bool canBeHit = true;
 
     private void Start()
     {
@@ -58,14 +59,21 @@ public class LifeManager : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         print(collision.gameObject.layer);
-        if(collision.gameObject.layer == LayerMask.NameToLayer("ignore"))
+        if(collision.gameObject.layer == LayerMask.NameToLayer("ignore") && canBeHit)
         {
+            canBeHit = false;
             Hit();
+            Invoke(nameof(ResetDamage), 0.5f);
         }
     }
 
     void ResetHit()
     {
         hitImage.enabled = false;
+    }
+
+    void ResetDamage()
+    {
+        canBeHit = true;
     }
 }
