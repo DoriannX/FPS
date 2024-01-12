@@ -287,6 +287,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2068440942604512589, guid: bfdfc736c5ca24a4e8081a6dc29bb0cb, type: 3}
+      propertyPath: _characterAnimation
+      value: 
+      objectReference: {fileID: 2029473422}
     - target: {fileID: 2247671742033164913, guid: bfdfc736c5ca24a4e8081a6dc29bb0cb, type: 3}
       propertyPath: m_ActionEvents.Array.size
       value: 8
@@ -6881,6 +6885,11 @@ PrefabInstance:
 --- !u!4 &2029473421 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2686890238580842728, guid: 7856c197eb4c77840878eba92e1c48b7, type: 3}
+  m_PrefabInstance: {fileID: 2029473420}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2029473422 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2686890238588325744, guid: 7856c197eb4c77840878eba92e1c48b7, type: 3}
   m_PrefabInstance: {fileID: 2029473420}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2044389878

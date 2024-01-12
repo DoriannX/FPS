@@ -50,6 +50,8 @@ public class Movements : MonoBehaviour
 
     MovementState _state;
 
+    [SerializeField] Animator _characterAnimation;
+
     enum MovementState
     {
         walking,
@@ -77,6 +79,14 @@ public class Movements : MonoBehaviour
 
     private void Update()
     {
+        if(_rb.velocity.magnitude > .5f)
+        {
+            _characterAnimation.SetBool("Run", true);
+        }
+        else
+        {
+            _characterAnimation.SetBool("Run", false);
+        }
         //ground check
         _grounded = Physics.Raycast(_transform.position, Vector3.down, _playerHeight * 0.5f + .2f, _whatIsGround);
         
@@ -95,6 +105,7 @@ public class Movements : MonoBehaviour
         }
 
         StateHandler();
+
     }
     public void GatherInput(InputAction.CallbackContext ctx)
     {
