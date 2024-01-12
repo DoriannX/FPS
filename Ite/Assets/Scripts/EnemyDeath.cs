@@ -12,6 +12,7 @@ public class EnemyDeath : MonoBehaviour
     SpawnEnemies _spawnEnemies;
     ScoreManager _scoreManager;
     public bool dead = false;
+    Animator _animator;
     private void Start()
     {
         _transform = transform;
@@ -22,21 +23,24 @@ public class EnemyDeath : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _spawnEnemies = GameObject.Find("EnemiesLocations").GetComponent<SpawnEnemies>();
         _scoreManager = GameObject.Find("Manager").GetComponent<ScoreManager>();
+        _animator = GetComponent<Animator>();
     }
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.layer == 7 || collision.gameObject.layer == 9)
         {
+
+            print("dead");
+            Destroy(_animator);
+            dead = true;
             GetChildren(transform, false);
             Destroy(_rb);
             Destroy(_collider);
             Destroy(GetComponent<AgentLinkMover>());
             Destroy(_navMeshAgent);
-            print("dead");
             _spawnEnemies.SpawnEnemy();
             _spawnEnemies._deadEnemies++;
             _scoreManager.score++;
-            dead = true;
         }
     }
 

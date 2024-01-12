@@ -2272,6 +2272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitForce: 2
+  dead: 0
 --- !u!114 &6084565347749535309
 MonoBehaviour:
   m_ObjectHideFlags: 0

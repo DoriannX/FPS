@@ -69,18 +69,12 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        print(_rb.velocity.magnitude);
         if (_animator)
         {
             if (_agent.velocity.magnitude >= 0.5f)
             {
                 print("walk");
                 _animator.SetBool("isWalking", true);
-            }
-            else if (_enemyDeath.dead)
-            {
-                print("dead");
-                Destroy(_animator);
             }
             else if(_agent.velocity.magnitude <= .5f)
             {
