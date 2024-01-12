@@ -11,6 +11,7 @@ public class EnemyDeath : MonoBehaviour
     NavMeshAgent _navMeshAgent;
     SpawnEnemies _spawnEnemies;
     ScoreManager _scoreManager;
+    public bool dead = false;
     private void Start()
     {
         _transform = transform;
@@ -35,6 +36,7 @@ public class EnemyDeath : MonoBehaviour
             _spawnEnemies.SpawnEnemy();
             _spawnEnemies._deadEnemies++;
             _scoreManager.score++;
+            dead = true;
         }
     }
 

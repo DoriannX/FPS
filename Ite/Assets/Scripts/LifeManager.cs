@@ -8,6 +8,11 @@ public class LifeManager : MonoBehaviour
     Image hitImage;
     DeathManager _deathManager;
     TextMeshProUGUI _lifeText;
+    AudioSource _playerAudio;
+    [SerializeField] AudioClip _stressFullMusic;
+    [SerializeField] AudioClip _DeathMusic;
+    bool stressed = false;
+    bool dead = false;
 
     private void Start()
     {
@@ -15,8 +20,9 @@ public class LifeManager : MonoBehaviour
         ResetHit();
         _deathManager = GameObject.Find("Manager").GetComponent<DeathManager>();
         _lifeText = GameObject.Find("Life").GetComponent<TextMeshProUGUI>();
+        _playerAudio = GetComponent<AudioSource>();
     }
-    void Hit()
+    public void Hit()
     {
         hitImage.enabled = true;
         Invoke(nameof(ResetHit), .3f);
@@ -26,9 +32,25 @@ public class LifeManager : MonoBehaviour
 
     private void Update()
     {
-        if(healthPoints <= 0)
+        if(healthPoints <= 3 && !stressed)
+        {
+            _playerAudio.clip = _stressFullMusic;
+            _playerAudio.Play();
+            stressed = true;
+        }
+        if(healthPoints <= 0 && !dead)
         {
             _deathManager.Dead();
+            AudioSource[] allAudioSources;
+            allAudioSources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+            foreach (AudioSource audioS in allAudioSources)
+            {
+                audioS.Stop();
+            }
+
+            _playerAudio.clip = _DeathMusic;
+            _playerAudio.Play();
+            dead = true;
         }
         _lifeText.text = "HP : " + healthPoints.ToString();
     }

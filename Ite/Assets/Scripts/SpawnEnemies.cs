@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnEnemies : MonoBehaviour
 {
-    [SerializeField] int _initialNumberEnemies;
+    int _initialNumberEnemies;
     [SerializeField] GameObject _enemy;
 
     List<Transform> _spawnPositionEnemyTransform = new List<Transform>();
@@ -22,7 +22,14 @@ public class SpawnEnemies : MonoBehaviour
             _spawnPositionEnemyTransform.Add(child);
         }
         _enemyParent = GameObject.Find("Enemies");
-        for(int i = 0; i < _initialNumberEnemies ; i++)
+        switch (PlayerPrefs.GetInt("difficulty"))
+        {
+            case 0: _initialNumberEnemies = 5; break;
+            case 1: _initialNumberEnemies = 11; break;
+            case 2: _initialNumberEnemies = 20; break;
+            default: _initialNumberEnemies = 50; break;
+        }
+        for (int i = 0; i < _initialNumberEnemies; i++)
         {
             SpawnEnemy();
         }

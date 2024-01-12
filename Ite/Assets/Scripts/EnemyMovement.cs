@@ -34,6 +34,8 @@ public class EnemyMovement : MonoBehaviour
     playerDetecter _playerDetecter;
     EnemyCollisionDetection _enemyCollisionDetection;
     NavMeshAgent _agent;
+    Animator _animator;
+    EnemyDeath _enemyDeath;
 
     private void Start()
     {
@@ -51,31 +53,15 @@ public class EnemyMovement : MonoBehaviour
 
         _enemyCollisionDetection = GetComponent<EnemyCollisionDetection>();
         _agent = GetComponent<NavMeshAgent>();
-        
-    }
-    private void FixedUpdate()
-    {
-        //if (_playerDetecter._playerDetected)
-        //{
-        //    return;
-        //}
-        //MoveEnemy();
+        _animator = GetComponent<Animator>();
+        _enemyDeath = GetComponent<EnemyDeath>();
     }
 
     private void Update()
     {
-        ////ground check
-        //_grounded = Physics.Raycast(_transform.position, Vector3.down, _playerHeight * 0.5f + .2f, _whatIsGround);
-
-        ////handle drag
-        //_rb.drag = (_grounded) ? _groundDrag : 0f;
-
-        //SpeedControl();
-
-        
         if (_agent)
         {
-            _transform.LookAt(new Vector3(_player.transform.position.x, _transform.position.y, _player.transform.position.z));
+            
             if (!_playerDetecter._playerDetected)
             {
                 _agent.destination = _player.transform.position;
@@ -83,84 +69,29 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-    }
-    void MoveEnemy()
-    {
-        if (_enemyCollisionDetection.obstacleDetected)
+        print(_rb.velocity.magnitude);
+        if (_animator)
         {
-            transform.Rotate(Vector3.up);
-        }
-        else
-        {
-            transform.LookAt(_player.transform.position);
-        }
-        _moveDirection = _transform.forward;
-        //on slope
-        if (OnSlope() && !_exitingSlope)
-        {
-
-            _rb.AddForce(GetSlopeMoveDirection() * _moveSpeed * 20f, ForceMode.Force);
-            print("on slope");
-            if (_rb.velocity.y > 0)
+            if (_agent.velocity.magnitude >= 0.5f)
             {
-                _rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+                print("walk");
+                _animator.SetBool("isWalking", true);
+            }
+            else if (_enemyDeath.dead)
+            {
+                print("dead");
+                Destroy(_animator);
+            }
+            else if(_agent.velocity.magnitude <= .5f)
+            {
+                print("idle");
+                _animator.SetBool("isWalking", false);
+                _transform.LookAt(new Vector3(_player.transform.position.x, _transform.position.y, _player.transform.position.z));
             }
         }
-        //grounded
-        else if (_grounded)
-        {
-            _rb.AddForce(_moveDirection.normalized * _moveSpeed * 10f, ForceMode.Force);
-            print("grounded");
-        }
-        //not grounded
-        else if (!_grounded)
-        {
-            _rb.AddForce(_moveDirection.normalized * _moveSpeed * 10f * _airMultiplier, ForceMode.Force);
-            print("not grounded");
-        }
-
-        _rb.useGravity = !OnSlope();
 
     }
-
-    void SpeedControl()
-    {
-        //limiting speed on slope
-        if (OnSlope() && !_exitingSlope)
-        {
-            if (_rb.velocity.magnitude > _moveSpeed)
-            {
-                _rb.velocity = _rb.velocity.normalized * _moveSpeed;
-            }
-        }
-        else
-        {
-            Vector3 flatVel = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-
-            //limit the speed
-            if (flatVel.magnitude > _moveSpeed)
-            {
-                Vector3 limitedVel = flatVel.normalized * _moveSpeed;
-
-                _rb.velocity = new Vector3(limitedVel.x, _rb.velocity.y, limitedVel.z);
-            }
-        }
-    }
-
-    bool OnSlope()
-    {
-        if (Physics.Raycast(_transform.position, Vector3.down, out _slopeHit, _playerHeight * .5f + .3f))
-        {
-            float angle = Vector3.Angle(Vector3.up, _slopeHit.normal);
-            return angle < maxSlopeAngle && angle != 0;
-        }
-        return false;
-    }
-
-    Vector3 GetSlopeMoveDirection()
-    {
-        return Vector3.ProjectOnPlane(_moveDirection, _slopeHit.normal).normalized;
-    }
+   
 
 
 }

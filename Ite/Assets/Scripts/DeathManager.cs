@@ -17,6 +17,9 @@ public class DeathManager : MonoBehaviour
 
     public void Dead()
     {
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         _death.SetActive(true);
         _deathText.text = "Game Over. Score :  " + _scoreManager.score;
         Time.timeScale = 0f;

@@ -7,7 +7,7 @@ public class Camera : MonoBehaviour
 {
     // Instantiation of the variables
     Transform _player;
-    [SerializeField] float _sensitivity = 2f;
+    float _sensitivity = 2;
     [SerializeField] float _controllerSensitivity = .5f;
     float _yRotation = 0f;
     float _xRotation = 0f;
@@ -20,13 +20,12 @@ public class Camera : MonoBehaviour
     {
         _transform = transform;
         _player = GameObject.Find("Player").GetComponent<Transform>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
         _orientation = GameObject.Find("Orientation").transform;
     }
 
     private void Update()
     {
+        _sensitivity = PlayerPrefs.GetFloat("sensitivity");
         _yRotation += _cameraPosition.x * Time.deltaTime;
         _xRotation -= _cameraPosition.y * Time.deltaTime;
         _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
